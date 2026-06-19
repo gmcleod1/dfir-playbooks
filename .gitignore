@@ -1,0 +1,17 @@
+# Case data - never commit real evidence or collected artifacts
+cases/
+evidence/
+*.json
+!reports/*.json
+*.csv
+!**/*-template.csv
+*.dmp
+*.mem
+*.raw
+*.e01
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
