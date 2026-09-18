@@ -1,0 +1,38 @@
+title: Registry Run Key Persistence via reg.exe or LOLBin
+id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+status: test
+description: >
+  Detects a process writing to HKCU/HKLM Run or RunOnce keys using a
+  living-off-the-land binary (reg.exe, powershell.exe, wscript.exe, etc.).
+  Covers T1547.001 Registry Run Keys / Startup Folder.
+references:
+  - https://attack.mitre.org/techniques/T1547/001/
+author: Garfield McLeod
+date: 2026-06-19
+tags:
+  - attack.persistence
+  - attack.t1547.001
+logsource:
+  product: windows
+  category: registry_set
+detection:
+  selection:
+    EventType: SetValue
+    TargetObject|contains:
+      - '\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
+      - '\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
+  filter_legit_installers:
+    Image|startswith:
+      - 'C:\Program Files\'
+      - 'C:\Program Files (x86)\'
+      - 'C:\Windows\System32\msiexec.exe'
+  condition: selection and not filter_legit_installers
+falsepositives:
+  - Software installers writing their own autostart entries
+  - Admin tooling (SCCM, Intune) pushing software
+level: medium
+fields:
+  - Image
+  - TargetObject
+  - Details
+  - User
